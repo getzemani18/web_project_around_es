@@ -188,3 +188,137 @@ function handeCardFormSubmit(evt, cardsContainer) {
   renderCard(nameInput.value, linkInput.value, cardsContainer);
   closeModal(modalAdd);
 }
+
+// Validar formulario "editar perfil"
+const form = document.forms.popup;
+const inputs = form.querySelectorAll(".popup__input");
+const submitButton = form.querySelector(".popup__button");
+//Validar formilario "nuevo lugar"
+const formNuevo = document.forms.newCard;
+const inputsNew = formNuevo.querySelectorAll(".popup__input");
+const submitButtonNew = formNuevo.querySelector(".popup__button");
+
+function showInputError(inputElement, errorMessage) {
+  const errorElement = form.querySelector(`.${inputElement.id}-input-error`);
+  inputElement.classList.add("popup__input_type_error");
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add("popup__input-error_active");
+}
+
+function showInputErrorNew(inputElement, errorMessage) {
+  const errorElementNew = formNuevo.querySelector(
+    `.${inputElement.id}-input-error`
+  );
+  errorElementNew.classList.add("popupnew__input_type_error");
+  errorElementNew.textContent = errorMessage;
+  errorElementNew.classList.add("popupnew__input-error_active");
+}
+
+function hideInputError(inputElement) {
+  const errorElement = form.querySelector(`.${inputElement.id}-input-error`);
+
+  inputElement.classList.remove("popup__input_type_error");
+  errorElement.textContent = "";
+
+  errorElement.classList.remove("popup__input-error_active");
+}
+
+function hideInputErrorNew(inputElement) {
+  const errorElementNew = formNuevo.querySelector(
+    `.${inputElement.id}-input-error`
+  );
+  inputElement.classList.remove("popupnew__input_type_error");
+  errorElementNew.textContent = "";
+  errorElementNew.classList.remove("popupnew__input-error_active");
+}
+
+function toggleButtonState() {
+  if ([...inputs].every((input) => input.validity.valid)) {
+    submitButton.disabled = false;
+    submitButton.classList.remove("popup__save-button_inactive");
+  } else {
+    submitButton.disabled = true;
+    submitButton.classList.add("popup__save-button_inactive");
+  }
+}
+
+function toggleButtonStateNew() {
+  if ([...inputsNew].every((input) => input.validity.valid)) {
+    submitButtonNew.disabled = false;
+    submitButtonNew.classList.remove("popup__save-button_inactive");
+  } else {
+    submitButtonNew.disabled = true;
+    submitButtonNew.classList.add("popup__save-button_inactive");
+  }
+}
+
+inputs.forEach((input) => {
+  input.addEventListener("input", () => {
+    if (!input.validity.valid) {
+      console.log(input);
+      showInputError(input, input.validationMessage);
+    } else {
+      hideInputError(input);
+    }
+    toggleButtonState();
+  });
+});
+
+inputsNew.forEach((input) => {
+  input.addEventListener("input", () => {
+    if (!input.validity.valid) {
+      console.log(input);
+
+      showInputErrorNew(input, input.validationMessage);
+    } else {
+      hideInputErrorNew(input);
+    }
+    toggleButtonStateNew();
+  });
+});
+
+form.addEventListener("submit", (evento) => {
+  let formValid = true;
+
+  inputs.forEach((input) => {
+    if (!input.validity.valid) {
+      showInputError(input, input.validationMessage);
+      formValid = false;
+    } else {
+      hideInputError(input);
+    }
+  });
+
+  inputsNew.forEach((input) => {
+    if (!input.validity.valid) {
+      showInputErrorNew(input, input.validationMessage);
+      formValid = false;
+    } else {
+      hideInputError(input);
+    }
+  });
+  toggleButtonState();
+
+  if (!formValid) {
+    evento.preventDefault();
+  }
+});
+
+//cerrar la ventana al hacer click afuera
+const popups = document.querySelectorAll(".popup");
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    popups.forEach((popup) => {
+      closeModal(popup);
+    });
+  }
+});
+
+popups.forEach((popup) => {
+  popup.addEventListener("click", (event) => {
+    if (event.target === event.currentTarget) {
+      closeModal(popup);
+    }
+  });
+});
