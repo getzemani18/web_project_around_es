@@ -235,20 +235,20 @@ function hideInputErrorNew(inputElement) {
 function toggleButtonState() {
   if ([...inputs].every((input) => input.validity.valid)) {
     submitButton.disabled = false;
-    submitButton.classList.remove("popup__save-button_inactive");
+    submitButton.classList.remove("popup__button_inactive");
   } else {
     submitButton.disabled = true;
-    submitButton.classList.add("popup__save-button_inactive");
+    submitButton.classList.add("popup__button_inactive");
   }
 }
 
 function toggleButtonStateNew() {
   if ([...inputsNew].every((input) => input.validity.valid)) {
     submitButtonNew.disabled = false;
-    submitButtonNew.classList.remove("popup__save-button_inactive");
+    submitButtonNew.classList.remove("popup__button_inactive");
   } else {
     submitButtonNew.disabled = true;
-    submitButtonNew.classList.add("popup__save-button_inactive");
+    submitButtonNew.classList.add("popup__button_inactive");
   }
 }
 
