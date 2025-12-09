@@ -166,3 +166,21 @@
 .popupnew__input_type_error {
   color: red;
 }
+
+.popup__button_inactive {
+  border: 1px solid #000;
+  opacity: 0.2;
+  background: #fff;
+  color: #000;
+  cursor: not-allowed;
+}
+
+.popup__input-error_active,
+.popupnew__input-error_active {
+  color: #ff0000;
+}
+
+.popup__button.popup__button_inactive:hover {
+  background: local;
+  cursor: not-allowed;
+}
