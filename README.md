@@ -24,6 +24,6 @@
 - Vista previa de imágenes en modal
 - validación de formularios
 
-## Enclace:
+## Enlace:
 
 https://github.com/getzemani18/web_project_around_es.git
