@@ -1,6 +1,6 @@
 # Tripleten web_project_around_es
 
-## Es una aplicacion interactiva similar a una red social donde puedes modificar tu perfil, dando un nombre y una breve descripción de ti, puedes agrgar publicaciones, dandole un titulo corto de como te gustaria llamar esa publicacion y poner la imagen que quieres que se muestre, solo tienes que egragar la direccion de la imagen y aparece al final de las demas. Podras darle like a las publicaciones, tambien puedes eliminarlas, dandole click al icono de la basurita.
+## Es una aplicacion interactiva similar a una red social donde puedes modificar tu perfil, dando un nombre y una breve descripción de ti, puedes agregar publicaciones, dandole un titulo corto de como te gustaria llamar esa publicacion y poner la imagen que quieres que se muestre, solo tienes que egragar la direccion de la imagen y aparece al final de las demas. Podras darle like a las publicaciones, tambien puedes eliminarlas, dandole click al icono de la basurita.
 
 ## Tecnologias:
 
