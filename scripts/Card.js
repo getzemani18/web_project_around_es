@@ -1,30 +1,26 @@
 class Card {
-  constructor(data, cardSelector) {
+  constructor(data, cardSelector, handleCardClick) {
     this._name = data.name;
     this._link = data.link;
     this._cardSelector = cardSelector;
+    this._handleCardClick = handleCardClick;
   }
 
   getCardElement() {
     const templateCard = document.querySelector(this._cardSelector);
     const cardElement = templateCard.content.cloneNode(true);
 
-    const cardTitle = cardElement.querySelector(".card__title");
-    const cardImage = cardElement.querySelector(".card__image");
-    console.log(cardTitle, cardImage);
-    cardTitle.textContent = this._name;
-    cardImage.alt = this._name;
-    cardImage.src = this._link;
+    this._cardTitle = cardElement.querySelector(".card__title");
+    this._cardImage = cardElement.querySelector(".card__image");
+    this._cardTitle.textContent = this._name;
+    this._cardImage.alt = this._name;
+    this._cardImage.src = this._link;
 
-    const likeBtn = cardElement.querySelector(".card__like-button");
-    likeBtn.addEventListener("click", this._handleLikeButton);
+    this._likeBtn = cardElement.querySelector(".card__like-button");
 
-    const deleteBtn = cardElement.querySelector(".card__delete-button");
-    deleteBtn.addEventListener("click", this._handleDeleteCard);
+    this._deleteBtn = cardElement.querySelector(".card__delete-button");
 
-    cardImage.addEventListener("click", () => {
-      this._handleImageClick(this._name, this._link);
-    });
+    this._setEventListeners();
 
     return cardElement;
   }
@@ -38,23 +34,23 @@ class Card {
     deleteButton.remove();
   }
 
-  _openModal(modal) {
-    modal.classList.add("popup_is-opened");
-  }
-
-  _handleImageClick(name, link) {
-    const imagePop = document.querySelector("#image-popup");
-    const imagePopPicture = imagePop.querySelector(".popup__image");
-    const imagePopCaption = imagePop.querySelector(".popup__caption");
-    console.log("Imagen click");
-    imagePopCaption.textContent = name;
-    imagePopPicture.src = link;
-    imagePopPicture.alt = name;
-    this._openModal(imagePop);
-  }
-
   generateCard() {
     this._element = this.getCardElement();
+  }
+
+  _setEventListeners() {
+    this._likeBtn.addEventListener("click", (evt) => {
+      this._handleLikeButton(evt);
+    });
+
+    this._deleteBtn.addEventListener("click", (evt) => {
+      this._handleDeleteCard(evt);
+    });
+
+    this._cardImage.addEventListener("click", () => {
+      console.log("h");
+      this._handleCardClick(this._name, this._link);
+    });
   }
 }
 

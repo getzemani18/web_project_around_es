@@ -1,15 +1,15 @@
 export default class Popup {
-  constructor(popup) {
-    this._popup = popup;
+  constructor(Popup) {
+    this._popup = document.querySelector(Popup);
+    console.log(this._popup);
   }
-
   open() {
     this._popup.classList.add("popup_opened");
-    document.addEventListener("keydowm", this._handleEscClose).blind(this);
+    document.addEventListener("keydowm", this._handleEscClose);
   }
 
   close() {
-    this._popup.classList.add("popup_opened");
+    this._popup.classList.remove("popup_opened");
     document.addEventListener("keydowm", this._handleEscClose);
   }
 

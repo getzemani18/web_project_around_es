@@ -1,6 +1,11 @@
 import Card from "./Card.js";
 import FormValidator from "./FormValidator.js";
+import Section from "./Section.js";
 import { openModal, closeModal, modal, modalAdd } from "./utils.js";
+console.log("text");
+import PopupWithImage from "./PopupWithImage.js";
+import UserInfo from "./UserInfo.js";
+import PopupWithForm from "./PopUpWithForm.js";
 
 const initialCards = [
   {
@@ -68,11 +73,44 @@ const cardsContainer = document.querySelector(".cards__list");
 
 function renderCard(name, link, container) {
   // console.log(container);
-  const cards = new Card({ name: name, link: link }, "#cards-content");
+  const cards = new Card(
+    { name: name, link: link },
+    "#cards-content",
+    handleCardClick
+  );
   const card = cards.getCardElement();
   container.append(card);
 }
 
+const cardSection = new Section({
+  items: initialCards,
+  renderer: (item) => {
+    const card = new Card(item, "#card-template", handleCardClick);
+
+    const cardElements = card.getCardElement();
+    cardSection.addItem(cardElements);
+  },
+});
+
+const userInfo = new UserInfo({
+  userSelector: ".profile__title",
+  userJob: ".profile__description",
+});
+
+const editProfilePopup = new PopupWithForm("#edit-popup", (formData) => {
+  userInfo.setUserInfo(formData);
+});
+
+const buttonEditProfile = document.querySelector(".profile__edit-button");
+buttonEditProfile.addEventListener("click", () => {
+  const userData = userInfo.getUserInfo();
+  nameInput.vale = userData.name;
+  jonInput.value = userData.job;
+
+  editProfilePopup.open();
+});
+
+editProfilePopup.setEventListeners();
 initialCards.forEach(function (cardData) {
   renderCard(cardData.name, cardData.link, cardsContainer);
 });
@@ -120,7 +158,11 @@ popups.forEach((popup) => {
 
 // iteracion de Card.js
 initialCards.forEach((item) => {
-  const card = new Card({ name: item.name, link: item.link }, "#cards-content");
+  const card = new Card(
+    { name: item.name, link: item.link },
+    "#cards-content",
+    handleCardClick
+  );
   const cardElement = card.getCardElement();
 
   document.querySelector(".cards__list").append(cardElement);
@@ -133,3 +175,11 @@ const cardFormValidator = new FormValidator(config, formElement);
 
 editProfileFormValidator.setEventListeners();
 cardFormValidator.setEventListeners();
+
+const imagePopup = new PopupWithImage("#image-popup");
+imagePopup.setEventListeners();
+
+function handleCardClick(name, link) {
+  console.log(name, link);
+  imagePopup.open(name, link);
+}
