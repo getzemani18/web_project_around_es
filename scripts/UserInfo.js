@@ -1,18 +1,18 @@
 export default class UserInfo {
-  constructor({ userSelector, userJob }) {
+  constructor({ userSelector, userDescription }) {
     this._userSelector = document.querySelector(userSelector);
-    this._userJob = document.querySelector(userJob);
+    this._userDescription = document.querySelector(userDescription);
   }
 
   getUserInfo() {
     return {
       name: this._userSelector.textContent,
-      job: this._userJob.textContent,
+      description: this._userDescription.textContent,
     };
   }
 
-  setUserInfo({ user, job }) {
-    this.userElement.textContent = user;
-    this.userElement.textContent = job;
+  setUserInfo({name, description}) {
+    this._userSelector.textContent = name;
+    this._userDescription.textContent = description;
   }
 }
