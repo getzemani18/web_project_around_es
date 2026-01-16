@@ -94,20 +94,23 @@ const cardSection = new Section({
 
 const userInfo = new UserInfo({
   userSelector: ".profile__title",
-  userJob: ".profile__description",
+  userDescription: ".profile__description",
 });
 
 const editProfilePopup = new PopupWithForm("#edit-popup", (formData) => {
   userInfo.setUserInfo(formData);
 });
 
+const nameInputs = document.querySelector(".popup__input_type_name")
+const jobInput = document.querySelector(".popup__input_type_description")
+
 const buttonEditProfile = document.querySelector(".profile__edit-button");
 buttonEditProfile.addEventListener("click", () => {
   const userData = userInfo.getUserInfo();
-  nameInput.vale = userData.name;
-  jonInput.value = userData.job;
-
-  editProfilePopup.open();
+  nameInputs.value = userData.name;
+  jobInput.value = userData.job;
+  
+  
 });
 
 editProfilePopup.setEventListeners();
@@ -116,12 +119,9 @@ initialCards.forEach(function (cardData) {
 });
 
 //agregar tarjetas
-const abrirCard = document.querySelector(".profile__add-button");
-const agregarCard = document.querySelector(".pop-crear");
 
-abrirCard.addEventListener("click", function () {
-  openModal(modalAdd);
-});
+
+
 
 agregarCard.addEventListener("click", function (evt) {
   handeCardFormSubmit(evt, cardsContainer);

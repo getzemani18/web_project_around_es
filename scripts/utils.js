@@ -9,6 +9,10 @@ const closeAddBtn = modalAdd.querySelector(".popup__close");
 const imagePop = document.querySelector("#image-popup");
 const closeImageBtn = imagePop.querySelector(".popup__close");
 
+//agregar tarjetas
+const abrirCard = document.querySelector(".profile__add-button");
+const agregarCard = document.querySelector(".pop-crear");
+
 function openModal(modal) {
   modal.classList.add("popup_is-opened");
 }
@@ -30,6 +34,14 @@ closeAddBtn.addEventListener("click", function () {
 
 closeImageBtn.addEventListener("click", function () {
   closeModal(imagePop);
+});
+
+abrirCard.addEventListener("click", function () {
+  openModal(modalAdd);
+});
+
+agregarCard.addEventListener("click", function (evt) {
+  handeCardFormSubmit(evt, cardsContainer);
 });
 
 function handleOpenEditModal() {
