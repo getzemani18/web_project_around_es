@@ -43,10 +43,6 @@ const config = {
   errorClass: "popup__input-error_active",
 };
 
-initialCards.forEach((item) => {
-  // console.log(item);
-});
-
 let formElement = modal.querySelector(".popup__form");
 
 function handleProfileFormSubmit(evt) {
@@ -85,7 +81,7 @@ function renderCard(name, link, container) {
 const cardSection = new Section({
   items: initialCards,
   renderer: (item) => {
-    const card = new Card(item, "#card-template", handleCardClick);
+    const card = new Card(item, "#card-content", handleCardClick);
 
     const cardElements = card.getCardElement();
     cardSection.addItem(cardElements);
@@ -101,59 +97,20 @@ const editProfilePopup = new PopupWithForm("#edit-popup", (formData) => {
   userInfo.setUserInfo(formData);
 });
 
-const nameInputs = document.querySelector(".popup__input_type_name")
-const jobInput = document.querySelector(".popup__input_type_description")
+const nameInputs = document.querySelector(".popup__input_type_name");
+const jobInput = document.querySelector(".popup__input_type_description");
 
 const buttonEditProfile = document.querySelector(".profile__edit-button");
 buttonEditProfile.addEventListener("click", () => {
   const userData = userInfo.getUserInfo();
   nameInputs.value = userData.name;
-  jobInput.value = userData.job;
-  
-  
+  jobInput.value = userData.description;
+  editProfilePopup.open();
 });
 
 editProfilePopup.setEventListeners();
 initialCards.forEach(function (cardData) {
   renderCard(cardData.name, cardData.link, cardsContainer);
-});
-
-//agregar tarjetas
-
-
-
-
-agregarCard.addEventListener("click", function (evt) {
-  handeCardFormSubmit(evt, cardsContainer);
-});
-
-function handeCardFormSubmit(evt, cardsContainer) {
-  evt.preventDefault();
-
-  let nameInput = document.querySelector(".popup__input_type_card-name");
-  let linkInput = document.querySelector(".popup__input_type_url");
-
-  renderCard(nameInput.value, linkInput.value, cardsContainer);
-  closeModal(modalAdd);
-}
-
-//cerrar la ventana al hacer click afuera
-const popups = document.querySelectorAll(".popup");
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    popups.forEach((popup) => {
-      closeModal(popup);
-    });
-  }
-});
-
-popups.forEach((popup) => {
-  popup.addEventListener("click", (event) => {
-    if (event.target === event.currentTarget) {
-      closeModal(popup);
-    }
-  });
 });
 
 // iteracion de Card.js
@@ -166,6 +123,15 @@ initialCards.forEach((item) => {
   const cardElement = card.getCardElement();
 
   document.querySelector(".cards__list").append(cardElement);
+});
+
+const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
+  renderCard(formData["place-name"], formData.link, cardsContainer);
+});
+addCardPopup.setEventListeners();
+const abrirCard = document.querySelector(".profile__add-button");
+abrirCard.addEventListener("click", () => {
+  addCardPopup.open();
 });
 
 //formValidator.js
