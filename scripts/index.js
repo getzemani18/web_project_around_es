@@ -1,12 +1,15 @@
 import Card from "./Card.js";
 import FormValidator from "./FormValidator.js";
-import Section from "./Section.js";
-import { openModal, closeModal, modal, modalAdd } from "./utils.js";
+// import Section from "./Section.js";
+
 import PopupWithImage from "./PopupWithImage.js";
 import UserInfo from "./UserInfo.js";
 import PopupWithForm from "./PopUpWithForm.js";
 
 const token = "dc926371-238c-4bb8-8a08-9738f937e94b";
+const cardsContainer = document.querySelector(".cards__list");
+
+// USUARIO
 
 fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
   headers: {
@@ -28,7 +31,7 @@ fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
   })
   .catch((err) => console.log(err));
 
-const cardsContainer = document.querySelector(".cards__list");
+// TARJETAS
 
 fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
   headers: {
@@ -50,6 +53,8 @@ fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
   })
   .catch((err) => console.log("Eror", err));
 
+// CONFIG VALIDACION
+
 const config = {
   inputSelector: ".popup__input",
   submitButtonSelector: ".popup__button",
@@ -58,27 +63,7 @@ const config = {
   errorClass: "popup__input-error_active",
 };
 
-let formElement = modal.querySelector(".popup__form");
-
-function handleProfileFormSubmit(evt) {
-  evt.preventDefault();
-
-  let nameInput = modal.querySelector(".popup__input_type_name");
-  let descriptionInput = modal.querySelector(".popup__input_type_description");
-
-  let newName = nameInput.value;
-  let newDescription = descriptionInput.value;
-
-  let currentName = document.querySelector(".profile__title");
-  let currentDescription = document.querySelector(".profile__description");
-
-  currentName.textContent = newName;
-  currentDescription.textContent = newDescription;
-
-  closeModal(modal);
-}
-formElement.addEventListener("submit", handleProfileFormSubmit);
-
+// RENDER CARD
 function renderCard(name, link, container) {
   const cards = new Card(
     { name: name, link: link },
@@ -89,10 +74,14 @@ function renderCard(name, link, container) {
   container.append(card);
 }
 
+// USER INFO
+
 const userInfo = new UserInfo({
   userSelector: ".profile__title",
   userDescription: ".profile__description",
 });
+
+// EDITAR PERFIL
 
 const editProfilePopup = new PopupWithForm("#edit-popup", (formData) => {
   userInfo.setUserInfo(formData);
@@ -108,12 +97,9 @@ buttonEditProfile.addEventListener("click", () => {
   jobInput.value = userData.description;
   editProfilePopup.open();
 });
+editProfilePopup.setEventListeners();
 
-// editProfilePopup.setEventListeners();
-// initialCards.forEach(function (cardData) {
-//   renderCard(cardData.name, cardData.link, cardsContainer);
-// });
-
+// AGREGAR CARD
 const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
   renderCard(formData["place-name"], formData.link, cardsContainer);
 });
@@ -123,14 +109,18 @@ abrirCard.addEventListener("click", () => {
   addCardPopup.open();
 });
 
-//formValidator.js
-const editProfileFormValidator = new FormValidator(config, formElement);
+//formValidator.js ----- VALIDACION
 
-const cardFormValidator = new FormValidator(config, formElement);
+const editProfileForm = document.querySelector("#edit-profile-form");
+const newCardForm = document.querySelector("#new-card-form");
+const editProfileFormValidator = new FormValidator(config, editProfileForm);
+
+const cardFormValidator = new FormValidator(config, newCardForm);
 
 editProfileFormValidator.setEventListeners();
 cardFormValidator.setEventListeners();
 
+// IMAGEN
 const imagePopup = new PopupWithImage("#image-popup");
 imagePopup.setEventListeners();
 
