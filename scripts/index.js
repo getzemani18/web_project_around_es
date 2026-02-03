@@ -2,38 +2,53 @@ import Card from "./Card.js";
 import FormValidator from "./FormValidator.js";
 import Section from "./Section.js";
 import { openModal, closeModal, modal, modalAdd } from "./utils.js";
-console.log("text");
 import PopupWithImage from "./PopupWithImage.js";
 import UserInfo from "./UserInfo.js";
 import PopupWithForm from "./PopUpWithForm.js";
 
-const initialCards = [
-  {
-    name: "Valle de Yosemite",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
+const token = "dc926371-238c-4bb8-8a08-9738f937e94b";
+
+fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
+  headers: {
+    authorization: token,
   },
-  {
-    name: "Lago Luoise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
+})
+  .then((res) => {
+    if (!res.ok) {
+      return Promise.reject(`Error: ${res.status}`);
+    }
+    return res.json();
+  })
+  .then((data) => {
+    console.log(data);
+
+    document.querySelector(".profile__title").textContent = data.name;
+    document.querySelector(".profile__description").textContent = data.about;
+    document.querySelector(".profile__image").src = data.avatar;
+  })
+  .catch((err) => console.log(err));
+
+const cardsContainer = document.querySelector(".cards__list");
+
+fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
+  headers: {
+    authorization: token,
   },
-  {
-    name: "Montañas Calvas",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_bald-mountains.jpg",
-  },
-  {
-    name: "Latemar",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_latemar.jpg",
-  },
-  {
-    name: "Parque Nacional de la Vanoise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_vanoise.jpg",
-  },
-  {
-    name: "Lago di Braies",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lago.jpg",
-  },
-  ,
-];
+})
+  .then((res) => {
+    if (!res.ok) {
+      return Promise.reject(`Error: ${res.status}`);
+    }
+    return res.json();
+  })
+  .then((cards) => {
+    console.log(cards);
+
+    cards.forEach((cardData) => {
+      renderCard(cardData.name, cardData.link, cardsContainer);
+    });
+  })
+  .catch((err) => console.log("Eror", err));
 
 const config = {
   inputSelector: ".popup__input",
@@ -64,29 +79,15 @@ function handleProfileFormSubmit(evt) {
 }
 formElement.addEventListener("submit", handleProfileFormSubmit);
 
-const cardsContainer = document.querySelector(".cards__list");
-// console.log(cardsContainer);
-
 function renderCard(name, link, container) {
-  // console.log(container);
   const cards = new Card(
     { name: name, link: link },
     "#cards-content",
-    handleCardClick
+    handleCardClick,
   );
   const card = cards.getCardElement();
   container.append(card);
 }
-
-const cardSection = new Section({
-  items: initialCards,
-  renderer: (item) => {
-    const card = new Card(item, "#card-content", handleCardClick);
-
-    const cardElements = card.getCardElement();
-    cardSection.addItem(cardElements);
-  },
-});
 
 const userInfo = new UserInfo({
   userSelector: ".profile__title",
@@ -108,22 +109,10 @@ buttonEditProfile.addEventListener("click", () => {
   editProfilePopup.open();
 });
 
-editProfilePopup.setEventListeners();
-initialCards.forEach(function (cardData) {
-  renderCard(cardData.name, cardData.link, cardsContainer);
-});
-
-// iteracion de Card.js
-initialCards.forEach((item) => {
-  const card = new Card(
-    { name: item.name, link: item.link },
-    "#cards-content",
-    handleCardClick
-  );
-  const cardElement = card.getCardElement();
-
-  document.querySelector(".cards__list").append(cardElement);
-});
+// editProfilePopup.setEventListeners();
+// initialCards.forEach(function (cardData) {
+//   renderCard(cardData.name, cardData.link, cardsContainer);
+// });
 
 const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
   renderCard(formData["place-name"], formData.link, cardsContainer);
