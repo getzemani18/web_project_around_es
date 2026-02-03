@@ -86,6 +86,7 @@ const userInfo = new UserInfo({
 const editProfilePopup = new PopupWithForm("#edit-popup", (formData) => {
   userInfo.setUserInfo(formData);
 });
+editProfilePopup.setEventListeners();
 
 const nameInputs = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
@@ -94,10 +95,10 @@ const buttonEditProfile = document.querySelector(".profile__edit-button");
 buttonEditProfile.addEventListener("click", () => {
   const userData = userInfo.getUserInfo();
   nameInputs.value = userData.name;
+
   jobInput.value = userData.description;
   editProfilePopup.open();
 });
-editProfilePopup.setEventListeners();
 
 // AGREGAR CARD
 const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
