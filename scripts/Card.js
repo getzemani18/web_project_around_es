@@ -6,6 +6,7 @@ class Card {
     this._handleCardClick = handleCardClick;
     this._handleConfirmDelete = handleConfirmDelete;
     this._id = data._id;
+    console.log(data, "constructor");
   }
 
   getCardElement() {
@@ -38,20 +39,13 @@ class Card {
     this._cardElement = null;
   }
 
-  deleteCard() {
-    fetch(`https://around-api.es.tripleten-services.com/v1/cards/${this._id}`git, {
-      method: "DELETE",
-      headers: {
-        authorization: token,
-      },
-    });
-  }
   _setEventListeners() {
     this._likeBtn.addEventListener("click", (evt) => {
       this._handleLikeButton(evt);
     });
 
     this._deleteBtn.addEventListener("click", () => {
+      console.log(this, "delete");
       this._handleConfirmDelete(this);
     });
 

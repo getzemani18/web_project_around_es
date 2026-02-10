@@ -5,7 +5,6 @@ import PopupWithImage from "./PopupWithImage.js";
 import UserInfo from "./UserInfo.js";
 import PopupWithForm from "./PopUpWithForm.js";
 import PopupWithConfirmation from "./PopupWithConfirmation.js";
-
 const token = "dc926371-238c-4bb8-8a08-9738f937e94b";
 const cardsContainer = document.querySelector(".cards__list");
 
@@ -48,7 +47,7 @@ fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
     console.log(cards);
 
     cards.forEach((cardData) => {
-      renderCard(cardData.name, cardData.link, cardsContainer);
+      renderCard(cardData, cardsContainer);
     });
   })
   .catch((err) => console.log("Eror", err));
@@ -135,9 +134,9 @@ const config = {
 };
 
 // RENDER CARD
-function renderCard(name, link, container) {
+function renderCard(cardData, container) {
   const cards = new Card(
-    { name: name, link: link },
+    cardData,
     "#cards-content",
     handleCardClick,
     handleConfirmDelete,
@@ -156,19 +155,21 @@ const userInfo = new UserInfo({
 const confirmPopup = new PopupWithConfirmation("#confirm-popup");
 confirmPopup.setEventListeners();
 
-// Eliminar una tarjeta
-
-let selectedCard;
-
 function handleConfirmDelete(card) {
-  selectedCard = card;
+  console.log(card);
   confirmPopup.open();
   confirmPopup.setSubmitAction(() => {
-    card
-      .removeCard()
-      .then(() => {
+    fetch(`https://around-api.es.tripleten-services.com/v1/cards/${card._id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: token,
+      },
+    })
+      .then((card) => {
+        card.deleteCard();
         confirmPopup.close();
       })
+
       .catch((err) => console.log(err));
   });
 }
