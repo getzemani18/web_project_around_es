@@ -6,6 +6,7 @@ class Card {
     this._handleCardClick = handleCardClick;
     this._handleConfirmDelete = handleConfirmDelete;
     this._id = data._id;
+
     console.log(data, "constructor");
   }
 
@@ -34,7 +35,7 @@ class Card {
     evt.target.classList.toggle("card__like-button_is-active");
   }
 
-  removeCard() {
+  deleteCard() {
     this._cardElement.remove();
     this._cardElement = null;
   }

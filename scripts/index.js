@@ -165,7 +165,7 @@ function handleConfirmDelete(card) {
         authorization: token,
       },
     })
-      .then((card) => {
+      .then(() => {
         card.deleteCard();
         confirmPopup.close();
       })
