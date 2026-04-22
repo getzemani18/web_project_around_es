@@ -1,13 +1,24 @@
 class Card {
-  constructor(data, cardSelector, handleCardClick, handleConfirmDelete) {
+  constructor(
+    data,
+    cardSelector,
+    handleCardClick,
+    handleConfirmDelete,
+    handleLikeClick,
+    userId,
+  ) {
     this._name = data.name;
     this._link = data.link;
     this._cardSelector = cardSelector;
     this._handleCardClick = handleCardClick;
     this._handleConfirmDelete = handleConfirmDelete;
     this._id = data._id;
+    this._handlelikeClick = handleLikeClick;
+    this._likes = data.likes;
+    this._ownerId = data.owner?._id || data.owner;
+    this._userId = userId;
 
-    console.log(data, "constructor");
+    // console.log(data, "constructor");
   }
 
   getCardElement() {
@@ -28,11 +39,13 @@ class Card {
 
     this._setEventListeners();
 
+    this.setLikes(this._likes);
+
+    if (this._ownerId !== this._userId) {
+      this._deleteBtn.remove();
+    }
+
     return this._cardElement;
-  }
-  _handleLikeButton(evt) {
-    console.log("button");
-    evt.target.classList.toggle("card__like-button_is-active");
   }
 
   deleteCard() {
@@ -40,9 +53,17 @@ class Card {
     this._cardElement = null;
   }
 
+  setLikes(likes) {
+    this._likes = !likes;
+
+    this._likeBtn.classList.toggle("card__like-button_is-active");
+  }
+
   _setEventListeners() {
-    this._likeBtn.addEventListener("click", (evt) => {
-      this._handleLikeButton(evt);
+    this._likeBtn.addEventListener("click", () => {
+      this._handlelikeClick(this);
+
+      console.log("click like");
     });
 
     this._deleteBtn.addEventListener("click", () => {
@@ -53,6 +74,10 @@ class Card {
     this._cardImage.addEventListener("click", () => {
       this._handleCardClick(this._name, this._link);
     });
+  }
+
+  getId() {
+    return this._id;
   }
 }
 

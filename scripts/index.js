@@ -10,47 +10,48 @@ const cardsContainer = document.querySelector(".cards__list");
 
 // USUARIO
 
-fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
-  headers: {
-    authorization: token,
-  },
-})
-  .then((res) => {
+let currentUserId;
+
+Promise.all([
+  fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
+    headers: {
+      authorization: token,
+    },
+  }).then((res) => {
     if (!res.ok) {
       return Promise.reject(`Error: ${res.status}`);
     }
     return res.json();
-  })
-  .then((data) => {
-    console.log(data);
+  }),
 
+  fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
+    headers: {
+      authorization: token,
+    },
+  }).then((res) => {
+    if (!res.ok) {
+      return Promise.reject(`Error: ${res.status}`);
+    }
+    return res.json();
+  }),
+])
+
+  // guardar en el usuario
+  .then(([data, cards]) => {
+    currentUserId = data._id;
+
+    // perfil
     document.querySelector(".profile__title").textContent = data.name;
     document.querySelector(".profile__description").textContent = data.about;
     document.querySelector(".profile__image").src = data.avatar;
-  })
-  .catch((err) => console.log(err));
-
-// TARJETAS
-
-fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
-  headers: {
-    authorization: token,
-  },
-})
-  .then((res) => {
-    if (!res.ok) {
-      return Promise.reject(`Error: ${res.status}`);
-    }
-    return res.json();
-  })
-  .then((cards) => {
-    console.log(cards);
 
     cards.forEach((cardData) => {
       renderCard(cardData, cardsContainer);
+      addCardPopup.close();
     });
   })
-  .catch((err) => console.log("Eror", err));
+
+  .catch((err) => console.log(err));
 
 //Editar Perfil
 
@@ -111,7 +112,7 @@ const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
   })
     .then((res) => res.json())
     .then((cardData) => {
-      renderCard(cardData.name, cardData.link, cardsContainer);
+      renderCard(cardData, cardsContainer);
     })
     .catch((err) => console.log(err));
 });
@@ -140,6 +141,8 @@ function renderCard(cardData, container) {
     "#cards-content",
     handleCardClick,
     handleConfirmDelete,
+    handleLikeClick,
+    currentUserId,
   );
   const card = cards.getCardElement();
   container.append(card);
@@ -153,18 +156,28 @@ const userInfo = new UserInfo({
 });
 //Confirmar borrar
 const confirmPopup = new PopupWithConfirmation("#confirm-popup");
+
 confirmPopup.setEventListeners();
 
 function handleConfirmDelete(card) {
   console.log(card);
   confirmPopup.open();
   confirmPopup.setSubmitAction(() => {
-    fetch(`https://around-api.es.tripleten-services.com/v1/cards/${card._id}`, {
-      method: "DELETE",
-      headers: {
-        authorization: token,
+    fetch(
+      `https://around-api.es.tripleten-services.com/v1/cards/${card.getId()}`,
+      {
+        method: "DELETE",
+        headers: {
+          authorization: token,
+        },
       },
-    })
+    )
+      .then((res) => {
+        if (!res.ok) {
+          return Promise.reject(`Error: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(() => {
         card.deleteCard();
         confirmPopup.close();
@@ -172,6 +185,34 @@ function handleConfirmDelete(card) {
 
       .catch((err) => console.log(err));
   });
+}
+
+// Añadir y eliminar "me gusta"
+
+function handleLikeClick(card) {
+  console.log("hola", card);
+  const method = card.likes ? "DELETE" : "PUT";
+  fetch(
+    `https://around-api.es.tripleten-services.com/v1/cards/${card.getId()}/likes`,
+    {
+      method: method,
+      headers: {
+        authorization: token,
+      },
+    },
+  )
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject(`Error: ${res.status}`);
+      }
+      return res.json();
+    })
+
+    .then((updateCard) => {
+      card.setLikes(updateCard.isLiked);
+    })
+
+    .catch((err) => console.log(err));
 }
 
 //formValidator.js ----- VALIDACION
@@ -192,4 +233,14 @@ imagePopup.setEventListeners();
 function handleCardClick(name, link) {
   console.log(name, link);
   imagePopup.open(name, link);
+}
+
+// actualizar foto de perfil
+function handleUpdatePerfil() {
+  fetch(`https://around-api.es.tripleten-services.com/v1/users/me/avatar`, {
+    method: method,
+    headers: {
+      authorization: token,
+    },
+  });
 }
