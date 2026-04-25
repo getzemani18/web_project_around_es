@@ -5,6 +5,7 @@ import PopupWithImage from "./PopupWithImage.js";
 import UserInfo from "./UserInfo.js";
 import PopupWithForm from "./PopUpWithForm.js";
 import PopupWithConfirmation from "./PopupWithConfirmation.js";
+import PopupSaving from "./PopupSaving.js";
 const token = "dc926371-238c-4bb8-8a08-9738f937e94b";
 const cardsContainer = document.querySelector(".cards__list");
 
@@ -249,6 +250,22 @@ function handleLikeClick(card) {
 
     .catch((err) => console.log(err));
 }
+
+//  Guardando...
+const api = new PopupSaving({
+  baseUrl: "https://around-api.es.tripleten-services.com/v1",
+  headers: {
+    authorization: "c56e30dc-2883-4270-a59e-b2f7bae969c6",
+    "Content-Type": "application/json",
+  }
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject(`Error: ${res.status}`);
+      }
+      return res.json();
+    })
+    .catch((err) => console.log(err)),
+});
 
 //formValidator.js ----- VALIDACION
 
