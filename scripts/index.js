@@ -97,6 +97,41 @@ buttonEditProfile.addEventListener("click", () => {
   editProfilePopup.open();
 });
 
+// actualizar foto de perfil
+
+const avatar = document.querySelector(".profile__avatar-edit");
+
+const updateAvatar = new PopupWithForm("#avatar-popup", (avatarData) => {
+  fetch(`https://around-api.es.tripleten-services.com/v1/users/me/avatar`, {
+    method: "PATCH",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      avatar: avatarData.avatar,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return Promise.reject(`Error: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then((userAvatarData) => {
+      document.querySelector(".profile__avatar-img").src =
+        userAvatarData.avatar;
+      updateAvatar.close();
+    })
+    .catch((err) => console.log(err));
+});
+
+updateAvatar.setEventListeners();
+
+avatar.addEventListener("click", () => {
+  updateAvatar.open();
+});
+
 //Añadir nueva tarjeta
 const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
   fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
@@ -233,14 +268,4 @@ imagePopup.setEventListeners();
 function handleCardClick(name, link) {
   console.log(name, link);
   imagePopup.open(name, link);
-}
-
-// actualizar foto de perfil
-function handleUpdatePerfil() {
-  fetch(`https://around-api.es.tripleten-services.com/v1/users/me/avatar`, {
-    method: method,
-    headers: {
-      authorization: token,
-    },
-  });
 }

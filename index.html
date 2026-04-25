@@ -18,7 +18,14 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <img class="profile__image" src="./images/avatar.jpg" alt="Avatar" />
+          <div class="profile__avatar">
+            <img
+              class="profile__image profile__avatar-edit profile__avatar-img"
+              src="./images/avatar.jpg"
+              alt="Avatar"
+            />
+          </div>
+
           <div class="profile__info">
             <h1 class="profile__title">Jacques Cousteau</h1>
             <button
@@ -36,6 +43,29 @@
         </section>
       </main>
 
+      <!-- Avatar -->
+      <div class="popup popup_type_avatar" id="avatar-popup">
+        <div class="popup__content">
+          <button
+            aria-label="Cerrar"
+            class="popup__close"
+            type="button"
+          ></button>
+          <h3 class="popup__title">Cambiar foto de perfil</h3>
+          <form class="popup__form popup__form_type_avatar">
+            <input
+              type="url"
+              name="avatar"
+              class="popup__input"
+              placeholder="Enlace del avatar"
+              required
+            />
+            <button type="submit" class="popup__button">Guardar</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Editar Perfil -->
       <div class="popup" id="edit-popup">
         <div class="popup__content">
           <button
