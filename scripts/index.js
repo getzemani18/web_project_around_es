@@ -5,7 +5,7 @@ import PopupWithImage from "./PopupWithImage.js";
 import UserInfo from "./UserInfo.js";
 import PopupWithForm from "./PopUpWithForm.js";
 import PopupWithConfirmation from "./PopupWithConfirmation.js";
-import PopupSaving from "./PopupSaving.js";
+
 const token = "dc926371-238c-4bb8-8a08-9738f937e94b";
 const cardsContainer = document.querySelector(".cards__list");
 
@@ -48,7 +48,7 @@ Promise.all([
 
     cards.forEach((cardData) => {
       renderCard(cardData, cardsContainer);
-      addCardPopup.close();
+      // addCardPopup.close();
     });
   })
 
@@ -56,7 +56,9 @@ Promise.all([
 
 //Editar Perfil
 
-const editProfilePopup = new PopupWithForm("#edit-popup", (formData) => {
+const editProfilePopup = new PopupWithForm("#edit-popup", (formData, evt) => {
+  const buttonElement = evt.submitter;
+  renderLoading(true, buttonElement);
   fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
     method: "PATCH",
     headers: {
@@ -82,7 +84,10 @@ const editProfilePopup = new PopupWithForm("#edit-popup", (formData) => {
       });
       editProfilePopup.close();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, buttonElement);
+    });
 });
 editProfilePopup.setEventListeners();
 
@@ -102,7 +107,10 @@ buttonEditProfile.addEventListener("click", () => {
 
 const avatar = document.querySelector(".profile__avatar-edit");
 
-const updateAvatar = new PopupWithForm("#avatar-popup", (avatarData) => {
+const updateAvatar = new PopupWithForm("#avatar-popup", (avatarData, evt) => {
+  const buttonElement = evt.submitter;
+
+  renderLoading(true, buttonElement);
   fetch(`https://around-api.es.tripleten-services.com/v1/users/me/avatar`, {
     method: "PATCH",
     headers: {
@@ -124,7 +132,10 @@ const updateAvatar = new PopupWithForm("#avatar-popup", (avatarData) => {
         userAvatarData.avatar;
       updateAvatar.close();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, buttonElement);
+    });
 });
 
 updateAvatar.setEventListeners();
@@ -134,7 +145,9 @@ avatar.addEventListener("click", () => {
 });
 
 //Añadir nueva tarjeta
-const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
+const addCardPopup = new PopupWithForm("#new-card-popup", (formData, evt) => {
+  const buttonElement = evt.submitter;
+  renderLoading(true, buttonElement);
   fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
     method: "POST",
     headers: {
@@ -149,8 +162,12 @@ const addCardPopup = new PopupWithForm("#new-card-popup", (formData) => {
     .then((res) => res.json())
     .then((cardData) => {
       renderCard(cardData, cardsContainer);
+      addCardPopup.close();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, buttonElement);
+    });
 });
 
 addCardPopup.setEventListeners();
@@ -251,21 +268,14 @@ function handleLikeClick(card) {
     .catch((err) => console.log(err));
 }
 
-//  Guardando...
-const api = new PopupSaving({
-  baseUrl: "https://around-api.es.tripleten-services.com/v1",
-  headers: {
-    authorization: "c56e30dc-2883-4270-a59e-b2f7bae969c6",
-    "Content-Type": "application/json",
+//Guardando ...
+function renderLoading(isLoading, buttonElement) {
+  if (isLoading) {
+    buttonElement.textContent = "Guardando...";
+  } else {
+    buttonElement.textContent = "Guardar";
   }
-    .then((res) => {
-      if (!res.ok) {
-        return Promise.reject(`Error: ${res.status}`);
-      }
-      return res.json();
-    })
-    .catch((err) => console.log(err)),
-});
+}
 
 //formValidator.js ----- VALIDACION
 
