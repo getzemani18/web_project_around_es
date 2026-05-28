@@ -113,7 +113,7 @@ abrirCard.addEventListener("click", () => {
   addCardPopup.open();
 });
 
-// CONFIG VALIDACION
+// CONFI VALIDACION
 
 const config = {
   inputSelector: ".popup__input",
