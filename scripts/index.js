@@ -1,47 +1,20 @@
 import Card from "./Card.js";
 import FormValidator from "./FormValidator.js";
 // import Section from "./Section.js";
+import api from "./Api.js";
 import PopupWithImage from "./PopupWithImage.js";
 import UserInfo from "./UserInfo.js";
 import PopupWithForm from "./PopUpWithForm.js";
 import PopupWithConfirmation from "./PopupWithConfirmation.js";
 
-const token = "dc926371-238c-4bb8-8a08-9738f937e94b";
 const cardsContainer = document.querySelector(".cards__list");
 
 // USUARIO
 
 let currentUserId;
-
-Promise.all([
-  fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
-    headers: {
-      authorization: token,
-    },
-  }).then((res) => {
-    if (!res.ok) {
-      return Promise.reject(`Error: ${res.status}`);
-    }
-    return res.json();
-  }),
-
-  fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
-    headers: {
-      authorization: token,
-    },
-  }).then((res) => {
-    if (!res.ok) {
-      return Promise.reject(`Error: ${res.status}`);
-    }
-    return res.json();
-  }),
-])
-
-  // guardar en el usuario
+Promise.all([api.getUserInfo(), api.getInitialCards()])
   .then(([data, cards]) => {
     currentUserId = data._id;
-
-    // perfil
     document.querySelector(".profile__title").textContent = data.name;
     document.querySelector(".profile__description").textContent = data.about;
     document.querySelector(".profile__image").src = data.avatar;
@@ -51,31 +24,17 @@ Promise.all([
       // addCardPopup.close();
     });
   })
-
   .catch((err) => console.log(err));
+
+// perfil
 
 //Editar Perfil
 
 const editProfilePopup = new PopupWithForm("#edit-popup", (formData, evt) => {
   const buttonElement = evt.submitter;
   renderLoading(true, buttonElement);
-  fetch("https://around-api.es.tripleten-services.com/v1/users/me", {
-    method: "PATCH",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: formData.name,
-      about: formData.description,
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return Promise.reject(`Error: ${res.status}`);
-      }
-      return res.json();
-    })
+  api
+    .editUserInfo(formData)
     .then((data) => {
       console.log(data);
       userInfo.setUserInfo({
@@ -111,22 +70,8 @@ const updateAvatar = new PopupWithForm("#avatar-popup", (avatarData, evt) => {
   const buttonElement = evt.submitter;
 
   renderLoading(true, buttonElement);
-  fetch(`https://around-api.es.tripleten-services.com/v1/users/me/avatar`, {
-    method: "PATCH",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      avatar: avatarData.avatar,
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return Promise.reject(`Error: ${res.status}`);
-      }
-      return res.json();
-    })
+  api
+    .updateAvatar(avatarData)
     .then((userAvatarData) => {
       document.querySelector(".profile__avatar-img").src =
         userAvatarData.avatar;
@@ -148,18 +93,9 @@ avatar.addEventListener("click", () => {
 const addCardPopup = new PopupWithForm("#new-card-popup", (formData, evt) => {
   const buttonElement = evt.submitter;
   renderLoading(true, buttonElement);
-  fetch("https://around-api.es.tripleten-services.com/v1/cards/", {
-    method: "POST",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: formData["place-name"],
-      link: formData.link,
-    }),
-  })
-    .then((res) => res.json())
+  console.log(formData);
+  api
+    .addCard(formData)
     .then((cardData) => {
       renderCard(cardData, cardsContainer);
       addCardPopup.close();
@@ -216,21 +152,8 @@ function handleConfirmDelete(card) {
   console.log(card);
   confirmPopup.open();
   confirmPopup.setSubmitAction(() => {
-    fetch(
-      `https://around-api.es.tripleten-services.com/v1/cards/${card.getId()}`,
-      {
-        method: "DELETE",
-        headers: {
-          authorization: token,
-        },
-      },
-    )
-      .then((res) => {
-        if (!res.ok) {
-          return Promise.reject(`Error: ${res.status}`);
-        }
-        return res.json();
-      })
+    api
+      .deleteCard(card.getId())
       .then(() => {
         card.deleteCard();
         confirmPopup.close();
@@ -244,22 +167,9 @@ function handleConfirmDelete(card) {
 
 function handleLikeClick(card) {
   console.log("hola", card);
-  const method = card.likes ? "DELETE" : "PUT";
-  fetch(
-    `https://around-api.es.tripleten-services.com/v1/cards/${card.getId()}/likes`,
-    {
-      method: method,
-      headers: {
-        authorization: token,
-      },
-    },
-  )
-    .then((res) => {
-      if (!res.ok) {
-        return Promise.reject(`Error: ${res.status}`);
-      }
-      return res.json();
-    })
+
+  api
+    .likeCard(card.getId(), card.likes)
 
     .then((updateCard) => {
       card.setLikes(updateCard.isLiked);
